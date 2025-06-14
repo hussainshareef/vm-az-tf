@@ -1,4 +1,4 @@
-name: Delete Azure Resources (No Time Restriction)
+name: Delete Azure Resources on main
 
 on:
   push:
@@ -9,29 +9,25 @@ jobs:
   delete:
     runs-on: ubuntu-latest
     env:
-      AZURE_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-      AZURE_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-      AZURE_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-      AZURE_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     steps:
-      - name: Install Azure CLI
-        uses: azure/setup-azure@v1
-        with:
-          enable-AzPSSession: false
-
-      - name: Azure Login using ENV
+      - name: Log in to Azure using environment variables
         run: |
           az login --service-principal \
             --username "$AZURE_CLIENT_ID" \
             --password "$AZURE_CLIENT_SECRET" \
             --tenant "$AZURE_TENANT_ID"
+          
           az account set --subscription "$AZURE_SUBSCRIPTION_ID"
 
       - name: Delete All Resource Groups Immediately
         run: |
           echo "Starting deletion of all resource groups..."
-
+          
           resource_groups=$(az group list --query "[].name" -o tsv)
           for rg in $resource_groups; do
             echo "Deleting resource group: $rg"
