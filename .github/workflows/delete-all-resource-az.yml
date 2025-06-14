@@ -1,9 +1,8 @@
 name: Delete Azure Resources on main
 
 on:
-  push:
-    branches:
-      - main
+  schedule:
+    - cron: '30 15 * * *'  # Every day at 9:00 PM IST
 
 jobs:
   delete:
@@ -27,11 +26,9 @@ jobs:
       - name: Delete All Resource Groups Immediately
         run: |
           echo "Starting deletion of all resource groups..."
-          
           resource_groups=$(az group list --query "[].name" -o tsv)
           for rg in $resource_groups; do
             echo "Deleting resource group: $rg"
             az group delete --name "$rg" --yes --no-wait
           done
-
           echo "Deletion triggered for all resource groups."
