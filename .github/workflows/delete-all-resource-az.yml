@@ -1,0 +1,27 @@
+name: Delete Azure Resources
+
+on:
+  schedule:
+    - cron: '30 15 * * *' # 9 PM IST = 3:30 PM UTC
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.ARM_CLIENT_SECRET }}
+
+      - name: Delete All Resources
+        run: |
+          current_hour=$(TZ='Asia/Kolkata' date +%H)
+          if [ "$current_hour" -ge 21 ]; then
+            echo "Starting deletion"
+            for rg in $(az group list --query "[].name" -o tsv); do
+              echo "Deleting $rg"
+              az group delete --name "$rg" --yes --no-wait
+            done
+          else
+            echo "Not 9 PM IST yet"
+          fi
