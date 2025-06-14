@@ -13,8 +13,8 @@ resource "azurerm_public_ip" "vm" {
 
 resource "azurerm_network_interface" "vm" {
   name                = "${var.vm_config.name}-nic"
-  location            = var.location
-  resource_group_name = var.resource_group_name
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
 
   ip_configuration {
     name                          = "internal"
@@ -30,8 +30,8 @@ resource "azurerm_windows_virtual_machine" "vm" {
   count = var.vm_config.os_type == "windows" ? 1 : 0
 
   name                = var.vm_config.name
-  resource_group_name = var.resource_group_name
-  location            = var.location
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
   size                = var.vm_config.size
   admin_username      = var.vm_config.admin_username
   admin_password      = var.vm_config.admin_password
@@ -59,8 +59,8 @@ resource "azurerm_linux_virtual_machine" "vm" {
   count = var.vm_config.os_type == "linux" ? 1 : 0
 
   name                = var.vm_config.name
-  resource_group_name = var.resource_group_name
-  location            = var.location
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
   size                = var.vm_config.size
   admin_username      = var.vm_config.admin_username
   network_interface_ids = [
