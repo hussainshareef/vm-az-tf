@@ -7,7 +7,6 @@ vm_config = {
   admin_username     = "azureadmin"
   admin_password     = "P@ssw0rd1234!"      # In production, use env vars or Key Vault
   ssh_public_key     = null                # No SSH for Windows
-  os_type            = "windows"
   image_publisher    = "MicrosoftWindowsServer"
   image_offer        = "WindowsServer"
   image_sku          = "2019-Datacenter"
