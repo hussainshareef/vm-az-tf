@@ -77,10 +77,6 @@ resource "azurerm_linux_virtual_machine" "vm" {
   resource_group_name = azurerm_resource_group.main.name
   size                = var.vm_config.size
   admin_username      = var.vm_config.admin_username
-  admin_password      = var.vm_config.admin_password
-  disable_password_authentication = false
-
-
   network_interface_ids = [
     azurerm_network_interface.vm.id
   ]
@@ -98,11 +94,21 @@ resource "azurerm_linux_virtual_machine" "vm" {
     version   = var.vm_config.image_version
   }
 
+  disable_password_authentication = var.vm_config.ssh_public_key != null ? true : false
+
   dynamic "admin_ssh_key" {
     for_each = var.vm_config.ssh_public_key != null ? [1] : []
     content {
       username   = var.vm_config.admin_username
       public_key = var.vm_config.ssh_public_key
+    }
+  }
+
+  # Optional: Provide password only when SSH is not used
+  dynamic "admin_password" {
+    for_each = var.vm_config.ssh_public_key == null && var.vm_config.admin_password != null ? [1] : []
+    content {
+      password = var.vm_config.admin_password
     }
   }
 
