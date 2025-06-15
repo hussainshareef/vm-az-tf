@@ -41,7 +41,7 @@ resource "azurerm_network_interface" "vm" {
   tags = var.vm_config.tags
 }
 
-resource "azurerm_windows_virtual_machine" "vm" {
+resource "azurerm_windows_virtual_machine" "windows" {
   name                = var.vm_config.name
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
@@ -69,7 +69,7 @@ resource "azurerm_windows_virtual_machine" "vm" {
   tags = var.vm_config.tags
 }
 
-resource "azurerm_linux_virtual_machine" "vm" {
+resource "azurerm_linux_virtual_machine" "linux" {
   name                = var.vm_config.name
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
