@@ -1,6 +1,11 @@
-output "vm_id" {
+output "windows_id" {
   description = "Virtual Machine ID"
-  value       = var.vm_config.os_type == "windows" ? azurerm_windows_virtual_machine.vm[0].id : azurerm_linux_virtual_machine.vm[0].id
+  value       = azurerm_windows_virtual_machine.windows.id
+}
+
+output "linux_id" {
+  description = "Virtual Machine ID"
+  value       = azurerm_linux_virtual_machine.linux.id
 }
 
 output "public_ip" {
