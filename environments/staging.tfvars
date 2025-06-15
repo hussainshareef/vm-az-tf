@@ -1,32 +1,35 @@
-variable "resource_group_name" {
-  description = "Name of the resource group"
-  type        = string
-}
+resource_group_name = "rg-devops-demo"
+location            = "East US"
 
-variable "location" {
-  description = "Azure region for resources"
-  type        = string
-}
+vm_config = {
+  name               = "devops-vm02"
+  size               = "Standard_DS1_v2"
+  admin_username     = "azureadmin"
+  admin_password     = "P@ssw0rd1234!"      # In production, use env vars or Key Vault
+  ssh_public_key     = null                # No SSH for Windows
+  os_type            = "windows"
+  image_publisher    = "MicrosoftWindowsServer"
+  image_offer        = "WindowsServer"
+  image_sku          = "2019-Datacenter"
+  image_version      = "latest"
 
-variable "vm_config" {
-  description = "Configuration for the virtual machine"
-  type = object({
-    name               = string
-    size               = string
-    admin_username     = string
-    admin_password     = optional(string)
-    ssh_public_key     = optional(string)
-    os_type            = string # "windows" or "linux"
-    image_publisher    = string
-    image_offer        = string
-    image_sku          = string
-    image_version      = string
-    subnet_id          = string
-    data_disks         = optional(list(object({
-      name         = string
-      disk_size_gb = number
-      lun          = number
-    })), [])
-    tags              = optional(map(string), {})
-  })
+  subnet_id          = "/subscriptions/xxxx/resourceGroups/rg-devops-demo/providers/Microsoft.Network/virtualNetworks/vnet-demo/subnets/subnet-1"
+
+  data_disks = [
+    {
+      name         = "datadisk1"
+      disk_size_gb = 50
+      lun          = 0
+    },
+    {
+      name         = "datadisk2"
+      disk_size_gb = 100
+      lun          = 1
+    }
+  ]
+
+  tags = {
+    environment = "staging"
+    project     = "terraform-vm"
+  }
 }
