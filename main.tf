@@ -42,7 +42,6 @@ resource "azurerm_network_interface" "vm" {
 }
 
 resource "azurerm_windows_virtual_machine" "vm" {
-  count               = var.vm_config.os_type == "windows" ? 1 : 0
   name                = var.vm_config.name
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
@@ -71,7 +70,6 @@ resource "azurerm_windows_virtual_machine" "vm" {
 }
 
 resource "azurerm_linux_virtual_machine" "vm" {
-  count               = var.vm_config.os_type == "linux" ? 1 : 0
   name                = var.vm_config.name
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
