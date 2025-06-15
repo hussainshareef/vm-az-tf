@@ -7,7 +7,6 @@ vm_config = {
   admin_username     = "azureadmin"
   admin_password     = "P@ssw0rd1234!"    # Use env vars or secret manager in real projects
   ssh_public_key     = null               # null if not using SSH
-  os_type            = "linux"
   image_publisher    = "Canonical"
   image_offer        = "UbuntuServer"
   image_sku          = "18.04-LTS"
