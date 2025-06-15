@@ -14,7 +14,7 @@ variable "vm_config" {
     name               = string
     size               = string
     admin_username     = string
-    admin_password     = optional(string)
+    admin_password     = string
     ssh_public_key     = optional(string)
     os_type            = string # "windows" or "linux"
     image_publisher    = string
