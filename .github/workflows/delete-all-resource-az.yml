@@ -1,8 +1,9 @@
 name: Delete Azure Resources on main
 
 on:
-  schedule:
-    - cron: '30 15 * * *'  # Every day at 9:00 PM IST
+  push:
+    branches:
+      - main
 
 jobs:
   delete:
