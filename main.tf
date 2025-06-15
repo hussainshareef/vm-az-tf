@@ -1,6 +1,24 @@
+provider "azurerm" {
+  features {}
+}
+
 resource "azurerm_resource_group" "main" {
   name     = var.resource_group_name
   location = var.location
+}
+
+resource "azurerm_virtual_network" "vnet" {
+  name                = "${var.vm_config.name}-vnet"
+  address_space       = ["10.0.0.0/16"]
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+}
+
+resource "azurerm_subnet" "subnet" {
+  name                 = "${var.vm_config.name}-subnet"
+  resource_group_name  = azurerm_resource_group.main.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = ["10.0.1.0/24"]
 }
 
 resource "azurerm_public_ip" "vm" {
@@ -18,7 +36,7 @@ resource "azurerm_network_interface" "vm" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = var.vm_config.subnet_id
+    subnet_id                     = azurerm_subnet.subnet.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.vm.id
   }
@@ -26,29 +44,15 @@ resource "azurerm_network_interface" "vm" {
   tags = var.vm_config.tags
 }
 
-resource "azurerm_virtual_network" "vnet" {
-  name                = "${var.vm_config.name}-vnet"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurerm_resource_group.main.location
-  resource_group_name = azurerm_resource_group.main.name
-}
-
-resource "azurerm_subnet" "subnet" {
-  name                 = "${var.vm_config.name}-subnet"
-  resource_group_name  = azurerm_resource_group.main.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["10.0.1.0/24"]
-}
-
 resource "azurerm_windows_virtual_machine" "vm" {
-  count = var.vm_config.os_type == "windows" ? 1 : 0
-
+  count               = var.vm_config.os_type == "windows" ? 1 : 0
   name                = var.vm_config.name
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
   size                = var.vm_config.size
   admin_username      = var.vm_config.admin_username
   admin_password      = var.vm_config.admin_password
+
   network_interface_ids = [
     azurerm_network_interface.vm.id
   ]
@@ -70,13 +74,13 @@ resource "azurerm_windows_virtual_machine" "vm" {
 }
 
 resource "azurerm_linux_virtual_machine" "vm" {
-  count = var.vm_config.os_type == "linux" ? 1 : 0
-
+  count               = var.vm_config.os_type == "linux" ? 1 : 0
   name                = var.vm_config.name
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
   size                = var.vm_config.size
   admin_username      = var.vm_config.admin_username
+
   network_interface_ids = [
     azurerm_network_interface.vm.id
   ]
